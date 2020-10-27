@@ -21,6 +21,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/raulk/lotus-bs-bench/bbolt"
+	fasterbs "github.com/raulk/lotus-bs-bench/faster"
 	lmdbbs "github.com/raulk/lotus-bs-bench/lmdb"
 	sqlite3bs "github.com/raulk/lotus-bs-bench/sqlite3"
 )
@@ -36,7 +37,7 @@ func main() {
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "store-type",
-				Usage:    "store type to use: 'badger', 'sqlite3', 'pebble', 'lmdb', 'boltdb'",
+				Usage:    "store type to use: 'badger', 'sqlite3', 'pebble', 'lmdb', 'boltdb', 'faster",
 				Required: true,
 			},
 			&cli.StringFlag{
@@ -112,6 +113,13 @@ func run(c *cli.Context) (err error) {
 	case "sqlite3":
 		log.Println("using sqlite3 blockstore")
 		bs, err = sqlite3bs.Open(path, sqlite3bs.Options{})
+		if err != nil {
+			return err
+		}
+
+	case "faster":
+		log.Println("using faster blockstore")
+		bs, err = fasterbs.Open(path, fasterbs.Options{})
 		if err != nil {
 			return err
 		}
